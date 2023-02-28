@@ -1,20 +1,13 @@
 import requests
-import os 
 import logging
-from dotenv import load_dotenv
-load_dotenv()
 
 
 logger = logging.getLogger("uvicorn")
 
-
-API_KEY = os.getenv('MAP_API')
-logger.info(API_KEY)
-
 class Search_map(object):
 
-    def __init__(self):
-        self.api_key = str(API_KEY)
+    def __init__(self, api_key):
+        self.api_key = api_key
     def __set_longitude(self, longnitude):
         self.longnitude = str(longnitude)
     def __set_latitude(self, latitude):
@@ -36,10 +29,7 @@ class Search_map(object):
             self.latitude, self.longnitude, self.radius, self.type, self.api_key
         )
 
-        logger.info(url)
 
-        # payload={}
-        # headers = {}
 
         response = requests.request("GET", url)
 

@@ -17,6 +17,8 @@ app = FastAPI()
 # Line Bot config
 accessToken = os.getenv('CHANNEL_ACCESS_TOKEN')
 secret = os.getenv('CHANNEL_SECRET')
+API_KEY = os.getenv('MAP_API')
+
 
 line_bot_api = LineBotApi(accessToken)
 handler = WebhookHandler(secret)
@@ -34,6 +36,8 @@ async def Bot(request: Request):
 
 
 
+
+# main function: msging
 @handler.add(MessageEvent)
 def handling_message(event):
     replyToken = event.reply_token
@@ -43,7 +47,7 @@ def handling_message(event):
     result = msg_type
 
     if msg_type == 'location':
-        search = Search_map()
+        search = Search_map(API_KEY)
         search.set_coordinates(msg.longitude, msg.latitude)
         search.set_radius(1500)
         search.set_type('restaurant')
