@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import os
 import logging
 
-from map import Search_map
+from program.map import Search_map
 
 logger = logging.getLogger("uvicorn")
 
@@ -61,5 +61,3 @@ def handling_message(event):
 
     echoMessages = TextSendMessage(text=result)
     line_bot_api.reply_message(reply_token=replyToken, messages=echoMessages)
-
-# uvicorn.run(app, host="0.0.0.0", port=8000)
