@@ -2,26 +2,19 @@ from fastapi import FastAPI, Request, HTTPException
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
-from dotenv import load_dotenv
-import os
-import logging
+
 
 from program.map import Search_map
+from program.config import CHANNEL_ACCESS_TOKEN, CHANNEL_SECRET, logger
 
-logger = logging.getLogger("uvicorn")
 
-
-load_dotenv()
 app = FastAPI()
 
 # Line Bot config
-accessToken = os.getenv('CHANNEL_ACCESS_TOKEN')
-secret = os.getenv('CHANNEL_SECRET')
-API_KEY = os.getenv('MAP_API')
 
 
-line_bot_api = LineBotApi(accessToken)
-handler = WebhookHandler(secret)
+line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
+handler = WebhookHandler(CHANNEL_SECRET)
 
 @app.post("/")
 async def Bot(request: Request):
@@ -41,23 +34,14 @@ async def Bot(request: Request):
 @handler.add(MessageEvent)
 def handling_message(event):
     replyToken = event.reply_token
-    msg = event.message
     msg_type = event.message.type
 
-    result = msg_type
+    if msg_type == 'text':
+        text = event.message.text
 
-    if msg_type == 'location':
-        search = Search_map(API_KEY)
-        search.set_coordinates(msg.longitude, msg.latitude)
-        search.set_radius(1500)
-        search.set_type('restaurant')
-
-        result = search.get_result()
-        logger.info(result)
-        logger.info(len(result))
 
 
     
 
-    echoMessages = TextSendMessage(text=result)
+    # echoMessages = TextSendMessage(text=result)
     line_bot_api.reply_message(reply_token=replyToken, messages=echoMessages)

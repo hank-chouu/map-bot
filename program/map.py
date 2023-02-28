@@ -1,13 +1,15 @@
 import requests
 import logging
 
+from program.config import MAP_API_KEY
+
 
 logger = logging.getLogger("uvicorn")
 
 class Search_map(object):
 
-    def __init__(self, api_key):
-        self.api_key = api_key
+    def __init__(self):
+        self.api_key = MAP_API_KEY
     def __set_longitude(self, longnitude):
         self.longnitude = str(longnitude)
     def __set_latitude(self, latitude):
