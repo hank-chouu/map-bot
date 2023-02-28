@@ -36,3 +36,5 @@ class Search_map(object):
         response = requests.request("GET", url)
 
         return response.text
+    
+Search = Search_map()
