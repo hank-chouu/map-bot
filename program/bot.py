@@ -22,9 +22,9 @@ handler = WebhookHandler(CHANNEL_SECRET)
 
 
 @app.post("/")
-async def Bot(request: Request):
+def Bot(request: Request):
     signature = request.headers["X-Line-Signature"]
-    body = await request.body()
+    body = request.body()
     logger.info(body.decode())
     try:
         handler.handle(body.decode(), signature)
@@ -150,8 +150,16 @@ def join_new_group(event):
     line_bot_api.reply_message(reply_token=reply_token, messages=reply_msg)
 
 
-@handler.add(LeaveEvent)
+
+@handler.add(UnfollowEvent)
 def remove_user(event):
 
-    user_id = event.source.group_id
+    user_id = event.source.user_id
     Mongo.delete(user_id)
+
+
+@handler.add(LeaveEvent)
+def leave_group(event):
+
+    group_id = event.source.group_id
+    Mongo.delete(group_id)
