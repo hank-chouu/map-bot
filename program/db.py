@@ -27,7 +27,6 @@ class Mongo_object(object):
         update = {"$set": {'status':0,'params':{}}}
         x = self.collection.update_one(query, update)
         return x
-
          
     
     def save_type(self, user_id, search_type):
