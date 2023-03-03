@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Request, HTTPException
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextSendMessage, FlexSendMessage, FollowEvent, UnfollowEvent
+from linebot.models import MessageEvent, FollowEvent, UnfollowEvent, JoinEvent, LeaveEvent
+from linebot.models import TextSendMessage, FlexSendMessage
 import json
 
 
@@ -24,7 +25,7 @@ handler = WebhookHandler(CHANNEL_SECRET)
 async def Bot(request: Request):
     signature = request.headers["X-Line-Signature"]
     body = await request.body()
-    # logger.info(body.decode())
+    logger.info(body.decode())
     try:
         handler.handle(body.decode(), signature)
     except InvalidSignatureError:
@@ -38,7 +39,10 @@ async def Bot(request: Request):
 def handling_message(event):
     try:
         reply_token = event.reply_token
-        user_id = event.source.user_id
+        if event.source.type == 'user':
+            user_id = event.source.user_id
+        elif event.source.type == 'group':
+            user_id = event.source.group_id
         # should make sure id is in
         # currently not allowing join group chat, so can inplement later
         msg_type = event.message.type
@@ -134,9 +138,20 @@ def create_new_user(event):
     Mongo.insert_new(user_id)
     line_bot_api.reply_message(reply_token=reply_token, messages=reply_msg)
 
+@handler.add(JoinEvent)
+def join_new_group(event):
 
-@handler.add(UnfollowEvent)
+    group_id = event.source.group_id
+    reply_token = event.reply_token
+
+    reply_msg = FlexSendMessage(alt_text='開始查詢', contents=init_msg)
+
+    Mongo.insert_new(group_id)
+    line_bot_api.reply_message(reply_token=reply_token, messages=reply_msg)
+
+
+@handler.add(LeaveEvent)
 def remove_user(event):
 
-    user_id = event.source.user_id
+    user_id = event.source.group_id
     Mongo.delete(user_id)
