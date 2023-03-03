@@ -22,9 +22,9 @@ handler = WebhookHandler(CHANNEL_SECRET)
 
 
 @app.post("/")
-async def Bot(request: Request):
+def Bot(request: Request):
     signature = request.headers["X-Line-Signature"]
-    body = await request.body()
+    body = request.body()
     logger.info(body.decode())
     try:
         handler.handle(body.decode(), signature)
