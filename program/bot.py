@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException
+from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, FollowEvent, UnfollowEvent, JoinEvent, LeaveEvent
@@ -11,7 +11,7 @@ from program.config import CHANNEL_ACCESS_TOKEN, CHANNEL_SECRET, logger
 from program.db import Mongo
 from program.carousel import resp_to_carousel, init_msg, init_msg2
 
-app = FastAPI()
+app = Flask(__name__)
 
 # Line Bot config
 
@@ -21,16 +21,25 @@ handler = WebhookHandler(CHANNEL_SECRET)
 
 
 
-@app.post("/")
-async def Bot(request: Request):
-    signature = request.headers["X-Line-Signature"]
-    body = await request.body()
-    logger.info(body.decode())
+@app.route("/callback", methods=['POST'])
+def callback():
+    # get X-Line-Signature header value
+    signature = request.headers['X-Line-Signature']
+
+    # get request body as text
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
+
+    # handle webhook body
     try:
-        handler.handle(body.decode(), signature)
+        handler.handle(body, signature)
     except InvalidSignatureError:
-        raise HTTPException(status_code=400, detail="Missing Parameters")
-    return "OK"
+        print("Invalid signature. Please check your channel access token/channel secret.")
+        abort(400)
+
+    return 'OK'
+
+
 
 
 # handlers
@@ -163,3 +172,6 @@ def leave_group(event):
 
     group_id = event.source.group_id
     Mongo.delete(group_id)
+
+if __name__ == "__main__":   
+    app.run()
