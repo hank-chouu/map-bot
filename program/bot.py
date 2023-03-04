@@ -4,14 +4,16 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, FollowEvent, UnfollowEvent, JoinEvent, LeaveEvent
 from linebot.models import TextSendMessage, FlexSendMessage
 import json
-
+import logging
 
 from program.map import Search_map
 from program.config import CHANNEL_ACCESS_TOKEN, CHANNEL_SECRET
 from program.db import Mongo
 from program.carousel import resp_to_carousel, init_msg, init_msg2
 
+
 app = Flask(__name__)
+app.logger.setLevel(logging.INFO)
 
 # Line Bot config
 
@@ -145,6 +147,7 @@ def create_new_user(event):
     reply_msg = FlexSendMessage(alt_text='開始查詢', contents=init_msg)
 
     Mongo.insert_new(user_id)
+    app.logger.info("Made a friend. Now users count: {}".format(Mongo.get_users_count()))
     line_bot_api.reply_message(reply_token=reply_token, messages=reply_msg)
 
 @handler.add(JoinEvent)
@@ -156,6 +159,7 @@ def join_new_group(event):
     reply_msg = FlexSendMessage(alt_text='開始查詢', contents=init_msg)
 
     Mongo.insert_new(group_id)
+    app.logger.info("Joined a group. Now users count: {}".format(Mongo.get_users_count()))
     line_bot_api.reply_message(reply_token=reply_token, messages=reply_msg)
 
 
@@ -165,6 +169,7 @@ def remove_user(event):
 
     user_id = event.source.user_id
     Mongo.delete(user_id)
+    app.logger.info("Lost a friend. Now users count: {}".format(Mongo.get_users_count()))
 
 
 @handler.add(LeaveEvent)
@@ -172,6 +177,7 @@ def leave_group(event):
 
     group_id = event.source.group_id
     Mongo.delete(group_id)
+    app.logger.info("Left a group. Now users count: {}".format(Mongo.get_users_count()))
 
 if __name__ == "__main__":   
     app.run(debug=True)

@@ -77,5 +77,9 @@ class Mongo_object(object):
             return True
         else:
             return False
+        
+    def get_users_count(self):
+        count = self.collection.count_documents({})
+        return count
     
 Mongo = Mongo_object()
