@@ -7,7 +7,7 @@ import json
 
 
 from program.map import Search_map
-from program.config import CHANNEL_ACCESS_TOKEN, CHANNEL_SECRET, logger
+from program.config import CHANNEL_ACCESS_TOKEN, CHANNEL_SECRET, allLogger
 from program.db import Mongo
 from program.carousel import resp_to_carousel, init_msg, init_msg2
 
@@ -28,7 +28,7 @@ def callback():
 
     # get request body as text
     body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
+    # app.logger.info("Request body: " + body)
 
     # handle webhook body
     try:
@@ -69,12 +69,12 @@ def handling_message(event):
                 if ('附近有什麼' in received_text or '附近有甚麼' in received_text) and (
                     '餐廳' in received_text or '咖啡廳' in received_text or '酒吧' in received_text):                
                     if '餐廳' in received_text:
-                        search_type = 'restaurant'
+                        keyword = '餐廳'
                     elif '咖啡廳' in received_text:
-                        search_type = 'cafe'
+                        keyword = '咖啡廳'
                     elif '酒吧' in received_text:
-                        search_type = 'bar'
-                    Mongo.save_type(user_id, search_type)                            
+                        keyword = '酒吧'
+                    Mongo.save_keyword(user_id, keyword)                            
                     reply_msg = TextSendMessage(text='我來找找！接下來請傳送你目前的位置資訊給我')
                     
                 else:
@@ -90,19 +90,19 @@ def handling_message(event):
             elif user_status == 2:                
                 if '走路' in received_text  or '搭車' in received_text:
                     if received_text == '走路':
-                        radius = 1000
+                        radius = 600
                     elif received_text == '搭車':
-                        radius = 5000
+                        radius = 3000
                     params = Mongo.get_params(user_id)
 
                     Search = Search_map()
-                    Search.set_type(params['type'])
+                    Search.set_keyword(params['keyword'])
                     Search.set_coordinates(params['latitude'], params['longitude'])
                     Search.set_radius(radius)
 
                     resp = Search.get_result()
                     resp = json.loads(resp)
-                    logger.info('Found ' + str(len(resp['results'])) + ' places')
+                    app.logger.info('Found ' + str(len(resp['results'])) + ' places')
 
                     
                     # 簡化(get first 10) 算距離 照片url 連結url 做成carousel
@@ -132,7 +132,7 @@ def handling_message(event):
 
 
     except Exception as e:
-        logger.error(str(e), exc_info=True)
+        app.logger.error(str(e), exc_info=True)
 
 
 
@@ -174,4 +174,4 @@ def leave_group(event):
     Mongo.delete(group_id)
 
 if __name__ == "__main__":   
-    app.run()
+    app.run(debug=True)

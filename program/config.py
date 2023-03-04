@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 import os
-import logging
 
 
 load_dotenv()
@@ -10,4 +9,3 @@ CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 MAP_API_KEY = os.getenv('MAP_API_KEY')
 MONGO_URL = os.getenv('MONGO_URL')
 
-logger = logging.getLogger("uvicorn")

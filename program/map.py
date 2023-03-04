@@ -24,16 +24,16 @@ class Search_map(object):
     def set_radius(self, radius):
         self.radius = str(radius)
     
-    def set_type(self, location_type):
-        self.type = str(location_type)
+    def set_keyword(self, keyword):
+        self.keyword = str(keyword)
 
     def get_result(self):
 
-        attrs = ['latitude', 'longitude', 'type', 'radius']
+        attrs = ['latitude', 'longitude', 'keyword', 'radius']
         if all(hasattr(self, attr) for attr in attrs):
 
-            url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={}%2C{}&radius={}&type={}&key={}&opennow=true&language=zh-TW".format(
-                self.latitude, self.longitude, self.radius, self.type, self.api_key
+            url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={}%2C{}&radius={}&keyword={}&key={}&opennow=true&language=zh-TW".format(
+                self.latitude, self.longitude, self.radius, self.keyword, self.api_key
             )
             response = requests.request("GET", url)
 

@@ -29,10 +29,17 @@ class Mongo_object(object):
         return x
          
     
-    def save_type(self, user_id, search_type):
+    def save_keyword(self, user_id, keyword):
 
         query = {'id': user_id}
-        update = {"$set": {'params':{'type': search_type}, 'status': 1}}
+        update = {"$set": {'params':{'keyword': keyword}, 'status': 1}}
+        x = self.collection.update_one(query, update)
+        return x
+    
+    def save_type(self, user_id, location_type):
+
+        query = {'id': user_id}
+        update = {"$set": {'params':{'type': location_type}, 'status': 1}}
         x = self.collection.update_one(query, update)
         return x
     

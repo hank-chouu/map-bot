@@ -18,6 +18,8 @@ def simplify_resp(resp:dict)->list:
         # lat, lng in string
         new_dict['coords'] = [str(element['geometry']['location']['lat']), str(element['geometry']['location']['lng'])]
         new_dict['place_id'] = element['place_id']
+        if 'photos' not in element.keys():
+            continue
         new_dict['photo_reference'] = element['photos'][0]['photo_reference']
         if 'rating' in element.keys():
             new_dict['rating'] = element['rating']
