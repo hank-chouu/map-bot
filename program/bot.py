@@ -7,7 +7,7 @@ import json
 
 
 from program.map import Search_map
-from program.config import CHANNEL_ACCESS_TOKEN, CHANNEL_SECRET, allLogger
+from program.config import CHANNEL_ACCESS_TOKEN, CHANNEL_SECRET
 from program.db import Mongo
 from program.carousel import resp_to_carousel, init_msg, init_msg2
 
