@@ -28,16 +28,21 @@ def simplify_resp(resp:dict)->list:
         output.append(new_dict)
     return output
 
-def get_distance(place_list:list, origin_coords:list)->list:
+def get_distance(place_list:list, origin_coords:list, radius:int)->list:
     # distance matrix api
     destinations_str = ''
     for i in range(len(place_list)):
         destinations_str += (place_list[i]['coords'][0] + '%2C' + place_list[i]['coords'][1])
         if i != len(place_list)-1:
             destinations_str += '%7C'
+
+    if radius == 600:
+        mode = 'walking'
+    else:
+        mode = 'driving'
     
-    url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={}&destinations={}&key={}&language=zh-TW".format(
-        origin_coords[0] + '%2C' + origin_coords[1], destinations_str, MAP_API_KEY
+    url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={}&destinations={}&key={}&language=zh-TW&mode={}".format(
+        origin_coords[0] + '%2C' + origin_coords[1], destinations_str, MAP_API_KEY, mode
     )
     response = requests.request('GET', url)
     resp_to_dict = json.loads(response.text)
@@ -196,10 +201,10 @@ def create_carousel(place_list)->dict:
     contents['contents'] = bubbles
     return contents
 
-def resp_to_carousel(resp_dict:dict, lat_lng:list)->dict:
+def resp_to_carousel(resp_dict:dict, lat_lng:list, radius:int)->dict:
     place_list = simplify_resp(resp_dict)
     # 經度 緯度
-    place_list = get_distance(place_list, lat_lng)
+    place_list = get_distance(place_list, lat_lng, radius)
     place_list = make_photo_url(place_list)
     place_list = make_place_url(place_list)
     carousel = create_carousel(place_list)

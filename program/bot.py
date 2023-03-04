@@ -16,8 +16,6 @@ app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
 # Line Bot config
-
-
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 
@@ -109,7 +107,7 @@ def handling_message(event):
                     
                     # 簡化(get first 10) 算距離 照片url 連結url 做成carousel
                     if len(resp['results']) != 0:
-                        carousel = resp_to_carousel(resp, [params['latitude'], params['longitude']])
+                        carousel = resp_to_carousel(resp, [params['latitude'], params['longitude']], radius)
                         reply_msg = FlexSendMessage(alt_text='查詢結果', contents=carousel)
                     else:
                         reply_msg = TextSendMessage(text='附近沒有營業中的店家了-0-')
