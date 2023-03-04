@@ -23,23 +23,23 @@ class Mongo_object(object):
         return x
     
     def reset_user(self, user_id):
+
         query = {'id': user_id}
         update = {"$set": {'status':0,'params':{}}}
         x = self.collection.update_one(query, update)
         return x
-         
+       
+    def start_search(self, user_id):
+
+        query = {'id': user_id}
+        update = {"$set": {'status': 1}}
+        x = self.collection.update_one(query, update)
+        return x         
     
     def save_keyword(self, user_id, keyword):
 
         query = {'id': user_id}
-        update = {"$set": {'params':{'keyword': keyword}, 'status': 1}}
-        x = self.collection.update_one(query, update)
-        return x
-    
-    def save_type(self, user_id, location_type):
-
-        query = {'id': user_id}
-        update = {"$set": {'params':{'type': location_type}, 'status': 1}}
+        update = {"$set": {'params':{'keyword': keyword}, 'status': 2}}
         x = self.collection.update_one(query, update)
         return x
     
@@ -52,7 +52,7 @@ class Mongo_object(object):
             params = res['params']
         params['latitude'] = str(latitude)
         params['longitude'] = str(longitude)
-        update = {'$set': {'status':2, 'params':params}}
+        update = {'$set': {'status':3, 'params':params}}
         x = self.collection.update_one(query, update)
         return x
 
@@ -81,5 +81,5 @@ class Mongo_object(object):
     def get_users_count(self):
         count = self.collection.count_documents({})
         return count
-    
+       
 Mongo = Mongo_object()

@@ -64,30 +64,31 @@ def handling_message(event):
 
             # need to handle the text len issue           
 
-            # phase 1: determine type
+            # phase 1: get started
             if user_status == 0:
-                if ('附近有什麼' in received_text or '附近有甚麼' in received_text) and (
-                    '餐廳' in received_text or '咖啡廳' in received_text or '酒吧' in received_text):                
-                    if '餐廳' in received_text:
-                        keyword = '餐廳'
-                    elif '咖啡廳' in received_text:
-                        keyword = '咖啡廳'
-                    elif '酒吧' in received_text:
-                        keyword = '酒吧'
-                    Mongo.save_keyword(user_id, keyword)                            
-                    reply_msg = TextSendMessage(text='我來找找！接下來請傳送你目前的位置資訊給我')
+                if received_text == '開始':
+                    Mongo.start_search(user_id)
+                    reply_msg = TextSendMessage(text='請輸入你想尋找的地點類型 (ﾉ>ω<)ﾉ')
                     
                 else:
-                    reply_msg = FlexSendMessage(alt_text='重新開始查詢', contents=init_msg2)
+                    reply_msg = FlexSendMessage('輸入「開始」來啟動搜尋', contents=init_msg2)
                 line_bot_api.reply_message(reply_token = reply_token, messages = reply_msg)
 
-            # phase 2-1: fool-proofing
-            elif user_status == 1:
+            # phase 2: determine keyword
+            if user_status == 1:
+
+                keyword = received_text
+                Mongo.save_keyword(user_id, keyword)                            
+                reply_msg = TextSendMessage(text='我來找找！接下來請傳送你目前的位置資訊給我 (ﾉ>ω<)ﾉ')
+                line_bot_api.reply_message(reply_token = reply_token, messages = reply_msg)
+
+            # phase 3-1: fool-proofing
+            elif user_status == 2:
                 reply_msg = TextSendMessage(text='請傳送位置訊息給我！')
                 line_bot_api.reply_message(reply_token = reply_token, messages = reply_msg)
 
-            # phase 3: return api data
-            elif user_status == 2:                
+            # phase 4: return api data
+            elif user_status == 3:                
                 if '走路' in received_text  or '搭車' in received_text:
                     if received_text == '走路':
                         radius = 600
@@ -108,7 +109,7 @@ def handling_message(event):
                     # 簡化(get first 10) 算距離 照片url 連結url 做成carousel
                     if len(resp['results']) != 0:
                         carousel = resp_to_carousel(resp, [params['latitude'], params['longitude']], radius)
-                        reply_msg = FlexSendMessage(alt_text='查詢結果', contents=carousel)
+                        reply_msg = FlexSendMessage(alt_text='顯示查詢結果', contents=carousel)
                     else:
                         reply_msg = TextSendMessage(text='附近沒有營業中的店家了-0-')
 
@@ -119,8 +120,8 @@ def handling_message(event):
                 line_bot_api.reply_message(reply_token = reply_token, messages = reply_msg)           
                 
 
-        # phase 2: determine location
-        elif msg_type == 'location' and user_status == 1:
+        # phase 3: determine location
+        elif msg_type == 'location' and user_status == 2:
 
             latitude = event.message.latitude
             longitude = event.message.longitude
@@ -142,7 +143,7 @@ def create_new_user(event):
     user_id = event.source.user_id
     reply_token = event.reply_token
 
-    reply_msg = FlexSendMessage(alt_text='開始查詢', contents=init_msg)
+    reply_msg = FlexSendMessage('輸入「開始」來啟動搜尋', contents=init_msg)
 
     Mongo.insert_new(user_id)
     app.logger.info("Made a friend. Now users count: {}".format(Mongo.get_users_count()))
@@ -154,7 +155,7 @@ def join_new_group(event):
     group_id = event.source.group_id
     reply_token = event.reply_token
 
-    reply_msg = FlexSendMessage(alt_text='開始查詢', contents=init_msg)
+    reply_msg = FlexSendMessage('輸入「開始」來啟動搜尋', contents=init_msg)
 
     Mongo.insert_new(group_id)
     app.logger.info("Joined a group. Now users count: {}".format(Mongo.get_users_count()))

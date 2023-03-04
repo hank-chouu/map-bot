@@ -218,7 +218,7 @@ init_msg = {
     "contents": [
       {
         "type": "text",
-        "text": "哈囉！請從以下選項開始查詢",
+        "text": "哈囉！請點下方按鈕啟動搜尋",
         "weight": "bold",
         "size": "lg"
       }
@@ -227,36 +227,16 @@ init_msg = {
   "footer": {
     "type": "box",
     "layout": "vertical",
-    "spacing": "md",
+    "spacing": "sm",
     "contents": [
       {
         "type": "button",
         "style": "secondary",
-        "height": "sm",
+        "height": "md",
         "action": {
           "type": "message",
-          "label": "附近有甚麼餐廳",
-          "text": "附近有甚麼餐廳"
-        }
-      },
-      {
-        "type": "button",
-        "style": "secondary",
-        "height": "sm",
-        "action": {
-          "type": "message",
-          "label": "附近有甚麼咖啡廳",
-          "text": "附近有甚麼咖啡廳"
-        }
-      },
-      {
-        "type": "button",
-        "style": "secondary",
-        "height": "sm",
-        "action": {
-          "type": "message",
-          "label": "附近有甚麼酒吧",
-          "text": "附近有甚麼酒吧"
+          "label": "開始",
+          "text": "開始"
         }
       },
       {
@@ -278,7 +258,7 @@ init_msg2 = {
     "contents": [
       {
         "type": "text",
-        "text": "請從以下選項重新開始查詢",
+        "text": "請點下方按鈕啟動搜尋",
         "weight": "bold",
         "size": "lg"
       }
@@ -287,36 +267,16 @@ init_msg2 = {
   "footer": {
     "type": "box",
     "layout": "vertical",
-    "spacing": "md",
+    "spacing": "sm",
     "contents": [
       {
         "type": "button",
         "style": "secondary",
-        "height": "sm",
+        "height": "md",
         "action": {
           "type": "message",
-          "label": "附近有甚麼餐廳",
-          "text": "附近有甚麼餐廳"
-        }
-      },
-      {
-        "type": "button",
-        "style": "secondary",
-        "height": "sm",
-        "action": {
-          "type": "message",
-          "label": "附近有甚麼咖啡廳",
-          "text": "附近有甚麼咖啡廳"
-        }
-      },
-      {
-        "type": "button",
-        "style": "secondary",
-        "height": "sm",
-        "action": {
-          "type": "message",
-          "label": "附近有甚麼酒吧",
-          "text": "附近有甚麼酒吧"
+          "label": "開始",
+          "text": "開始"
         }
       },
       {
