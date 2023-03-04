@@ -102,7 +102,7 @@ def handling_message(event):
 
                     resp = Search.get_result()
                     resp = json.loads(resp)
-                    app.logger.info('Found ' + str(len(resp['results'])) + ' places')
+                    # app.logger.info('Found ' + str(len(resp['results'])) + ' places')
 
                     
                     # 簡化(get first 10) 算距離 照片url 連結url 做成carousel
