@@ -72,8 +72,8 @@ class Mongo_object(object):
     def is_user_exists(self, user_id):
 
         query = {'id':user_id}
-        result = self.connection.find(query)
-        if len(result) == 1:
+        result = self.collection.find(query)
+        if len(list(result)) == 1:
             return True
         else:
             return False

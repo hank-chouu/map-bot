@@ -53,8 +53,14 @@ def handling_message(event):
         elif event.source.type == 'group':
             user_id = event.source.group_id
         # should make sure id is in
-        # currently not allowing join group chat, so can inplement later
         msg_type = event.message.type
+
+        if not Mongo.is_user_exists(user_id):
+            reply_msg = FlexSendMessage('輸入「開始」來啟動搜尋', contents=init_msg)
+            Mongo.insert_new(user_id)
+            app.logger.info("Made a friend. Now users count: {}".format(Mongo.get_users_count()))
+            line_bot_api.reply_message(reply_token=reply_token, messages=reply_msg)
+            return
 
         user_status = Mongo.get_status(user_id)
 
