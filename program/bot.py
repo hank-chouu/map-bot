@@ -68,7 +68,7 @@ def handling_message(event):
             if user_status == 0:
                 if received_text == '開始':
                     Mongo.start_search(user_id)
-                    reply_msg = TextSendMessage(text='請輸入你想尋找的地點類型 (ﾉ>ω<)ﾉ')
+                    reply_msg = TextSendMessage(text='你好！請輸入你想尋找的地點類型 (ﾉ>ω<)ﾉ')
                     
                 else:
                     reply_msg = FlexSendMessage('輸入「開始」來啟動搜尋', contents=init_msg2)
