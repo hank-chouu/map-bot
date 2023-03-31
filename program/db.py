@@ -6,7 +6,7 @@ class Mongo_object(object):
 
     def __init__(self):
 
-        client = pymongo.MongoClient(MONGO_URL)
+        client = pymongo.MongoClient(MONGO_URL, connect=False)
         db = client["map_bot"]
         self.collection = db["users"]
 
